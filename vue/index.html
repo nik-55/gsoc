@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        {{ greeting }}
+        <input v-model="greeting" v-if="isvisible"/>
+        <input v-model="greeting" v-else-if="isvisible"/>
+        <input v-model="greeting" v-else/>
+        <h1 v-show="isvisible">Nikhil</h1>
+        <button v-on:click="isvisible=!isvisible">toggle</button>
+        <button @click="changegreet">Change greet</button>
+        <!-- <custom-form/> -->
+        <custom-div/>
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        let app = Vue.createApp({
+            data: function(){
+                return {
+                    greeting: "Hello mister d",
+                    isvisible: 1
+                }
+            },
+            methods: {
+                changegreet: function(){
+                    this.greeting = "Muitisjhf"
+                }
+            },
+        });
+        app.component('custom-form',{
+            template: `
+            <div>
+                <h1>{{title}}</h1>
+                <h2>{{title2}}</h2>
+                <input placeholder="email" v-model="input1"/>
+                <input placeholder="password"/>
+            </div>
+            `,
+            data() {
+                return {
+                    title: "hello miui",
+                    input1: ""
+                }
+            },
+            computed:{
+                input1: {
+                    get() {
+                        
+                    },
+                    set(value) {
+                        this.$emit('update:modelvalue',value)
+                    }
+                }
+            },
+            props: ['title2']
+        })
+
+        app.component('custom-div',{
+            template:`
+            <div>
+                <h1>Neew</h1>
+                <custom-form v-bind:title2="nikhilpp"/>
+                <custom-form :title2="nikhilpp"/>
+            </div>
+            `,
+            components: ['custom-form'],
+            data: function(){
+                return {
+                    nikhilpp: "dfv"
+                }
+            }
+        })
+        app.mount('#app');
+    </script>
+</body>
+</html>
