@@ -76,3 +76,75 @@ chrome developers tool ---> recorder
 BDD ---> behaviour driven development   
 
 junit reporters ---> jenkins  
+
+You can't mix multiple selector strategies in one selector. Use multiple chained element  
+queries to reach the same goal  
+
+For example in first $ we are using css selector strategies and in the second we are   
+using xpath strategies
+
+`$('css selector strategies').$('xpath strategies')`  
+
+```
+const elem = await $('header h1*=Welcome') // doesn't work!!!
+// use instead
+const elem = await $('header').$('*=driver')
+```
+
+`$( 'button=Submit' )`  
+`$( 'button*=Submit' )`   
+`<my-element>Bharat is love</my-element>`
+`$( '<my-element />' )`   
+ 
+
+```
+const paragraph = await $('//body/p[2]')
+await expect(paragraph).toHaveText('barfoo')
+
+const parent = await paragraph.$('..')
+expect(await parent.getTagName()).toBe('body')
+```
+
+
+`<div aria-label="foobar">Hello World!</div>`  
+`const elem = await $('aria/foobar')`   
+
+```
+<button aria-labelledby="ref-1">Click Me!</button>
+<div id="ref-1">Some Button</div>
+```
+
+aria-labelledby
+```
+const elem = await $('aria/Some Button')
+await expect(elem).toHaveText('Click Me!')
+```
+
+shadow dom   
+`shadow$()`   
+`shadow$$()`   
+
+
+```
+browser.addLocatorStrategy('myCustomStrategy', (selector, root) => {
+    /**
+     * scope should be document if called on browser object
+     * and `root` if called on an element object
+     */
+    const scope = root ? root : document
+    return scope.querySelectorAll(selector)
+})
+
+
+<div class="foobar" id="first">
+    <div class="foobar" id="second">
+        barfoo
+    </div>
+</div>
+
+const elem = await browser.custom$('myCustomStrategy', '.foobar')
+console.log(await elem.getAttribute('id')) // returns "first"
+const nestedElem = await elem.custom$('myCustomStrategy', '.foobar')
+console.log(await elem.getAttribute('id')) // returns "second"
+```
+
